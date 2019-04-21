@@ -7,6 +7,10 @@ define(['util', 'require', './src/eventhandling', './src/googledrive', './src/co
   var suites = [];
 
   function setup (env, test) {
+    global.sessionStorage = {
+      setItem: function() {},
+      removeItem: function() {}
+    };
     global.localStorage = {
       setItem: function() {},
       removeItem: function() {}
@@ -18,6 +22,12 @@ define(['util', 'require', './src/eventhandling', './src/googledrive', './src/co
     RemoteStorage.prototype = {
       setBackend: function (b) {
         this.backend = b;
+      },
+      setRememberMe: function(newvalue) {
+        this.rememberme = newvalue;
+      },
+      getPersistState: function() {
+        return this.rememberme;
       }
     };
 
@@ -28,6 +38,7 @@ define(['util', 'require', './src/eventhandling', './src/googledrive', './src/co
 
   function beforeEach(env, test) {
     env.rs = new RemoteStorage();
+
     env.rs.apiKeys= { googledrive: {clientId: 'testkey'} };
     var oldLocalStorageAvailable = util.localStorageAvailable;
     util.localStorageAvailable = function() { return true; };

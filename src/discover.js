@@ -5,12 +5,12 @@ const util = require('./util');
 const WebFinger = require('webfinger.js');
 
 // feature detection flags
-var haveXMLHttpRequest, hasLocalStorage;
+var haveXMLHttpRequest, hasStorage;
 
-// used to store settings in localStorage
+// used to store settings in storage
 var SETTINGS_KEY = 'remotestorage:discover';
 
-// cache loaded from localStorage
+// cache loaded from storage
 var cachedInfo = {};
 
 /**
@@ -63,8 +63,8 @@ const Discover = function Discover(userAddress) {
         properties: rs.properties
       };
 
-      if (hasLocalStorage) {
-        localStorage[SETTINGS_KEY] = JSON.stringify({ cache: cachedInfo });
+      if (hasStorage) {
+        util.setInStorage(SETTINGS_KEY, JSON.stringify({ cache: cachedInfo }), rs.getPersistState());
       }
 
       return resolve(cachedInfo[userAddress]);
@@ -81,10 +81,9 @@ Discover.DiscoveryError.prototype = Object.create(Error.prototype);
 Discover.DiscoveryError.prototype.constructor = Discover.DiscoveryError;
 
 Discover._rs_init = function (/*remoteStorage*/) {
-  hasLocalStorage = util.localStorageAvailable();
-  if (hasLocalStorage) {
-    var settings;
-    try { settings = JSON.parse(localStorage[SETTINGS_KEY]); } catch(e) { /* empty */ }
+  hasStorage = util.storageAvailable();
+  if (hasStorage) {
+    const settings = util.getJSONFromStorage(SETTINGS_KEY);
     if (settings) {
       cachedInfo = settings.cache;
     }
@@ -97,8 +96,8 @@ Discover._rs_supported = function () {
 };
 
 Discover._rs_cleanup = function () {
-  if (hasLocalStorage) {
-    delete localStorage[SETTINGS_KEY];
+  if (hasStorage) {
+    util.removeFromStorage(SETTINGS_KEY);
   }
 };
 

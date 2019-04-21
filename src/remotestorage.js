@@ -168,9 +168,29 @@ RemoteStorage.prototype = {
 
   /**
    * Allows changing whether the next user should be remembered after their session ends
+   *
+   * @param {boolean} newvalue the new value of the 'rememberme' flag
    */
   setRememberMe: function setRememberMe(newvalue) {
+    if (this.remote && this.remote.connected) {
+      throw new Error("Cannot set 'remember me' when connected");
+    }
+    if (config.cache) {
+     throw new Error("Cannot set 'remember me' when caching is enabled (must be 'true' in this case)"); 
+    }
     this.rememberme = newvalue;
+  },
+
+  /**
+   * Whether or not data (auth, backend, etc) should be persisted after the session ends
+   *
+   * @returns {boolean} persistState the current persistence state
+   */
+  getPersistState: function getPersistState() {
+    if (config.cache) {
+      return true;
+    }
+    return this.rememberme;
   },
 
   /**
@@ -386,16 +406,7 @@ RemoteStorage.prototype = {
   },
 
   setInStorage: function(key, value) {
-    if (this.rememberme) {
-      localStorage.setItem(key, value);
-    } else {
-      sessionStorage.setItem(key, value);
-    }
-  },
-
-  removeFromStorage: function(key) {
-    localStorage.removeItem(key);
-    sessionStorage.removeItem(key);
+    util.setInStorage(key, value, this.getPersistState());
   },
 
   /**
@@ -409,7 +420,7 @@ RemoteStorage.prototype = {
       if (what) {
         this.setInStorage('remotestorage:backend', what);
       } else {
-        this.removeFromStorage('remotestorage:backend');
+        util.removeFromStorage('remotestorage:backend');
       }
     }
   },
@@ -872,6 +883,5 @@ Object.defineProperty(RemoteStorage.prototype, 'caching', {
  *
  * Not available, when caching is turned off.
  */
-
 module.exports = RemoteStorage;
 require('./modules');

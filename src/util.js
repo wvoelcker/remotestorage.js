@@ -296,6 +296,37 @@ var util = {
     }
   },
 
+
+  /**
+   * Removes item specified by 'key' from both localStorage and sessionStorage
+   * 
+   * @param {string} key - storage key
+   *
+   * @returns undefined
+   */
+  removeFromStorage: function(key) {
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+  },
+
+
+  /**
+   * Set value in storage, choose local or session storage depending on input parameters
+   *
+   * @param {string} key - storage key
+   * @param {string} value - value to store
+   * @param {boolean} isPersistent - whether or not to persist the value after the end of the browser session
+   *
+   * @returns {string} string from storage or undefined
+   */
+  setInStorage: function(key, value, isPersistent) {
+    if (isPersistent) {
+      localStorage.setItem(key, value);
+    } else {
+      sessionStorage.setItem(key, value);
+    }
+  },
+
   /**
    * Decide if data should be treated as binary based on the content (presence of non-printable characters
    * or replacement character) and content-type.

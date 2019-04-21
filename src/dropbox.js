@@ -38,7 +38,7 @@ var Sync = require('./sync');
  *     after the syncCycle
  */
 
-let hasLocalStorage;
+let hasStorage;
 const AUTH_URL = 'https://www.dropbox.com/oauth2/authorize';
 const SETTINGS_KEY = 'remotestorage:dropbox';
 const PATH_PREFIX = '/remotestorage';
@@ -87,9 +87,9 @@ var Dropbox = function (rs) {
   this._fetchDeltaPromise = null;
   this._itemRefs = {};
 
-  hasLocalStorage = util.localStorageAvailable();
+  hasStorage = util.storageAvailable();
 
-  if (hasLocalStorage){
+  if (hasStorage){
     const settings = getJSONFromLocalStorage(SETTINGS_KEY);
     if (settings) {
       this.configure(settings);
@@ -134,18 +134,18 @@ Dropbox.prototype = {
     if (typeof settings.token !== 'undefined') { this.token = settings.token; }
 
     var writeSettingsToCache = function() {
-      if (hasLocalStorage) {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+      if (hasStorage) {
+        util.setInStorage(SETTINGS_KEY, JSON.stringify({
           userAddress: this.userAddress,
           token: this.token
-        }));
+        }), this.rs.getPersistState());
       }
     };
 
     var handleError = function() {
       this.connected = false;
-      if (hasLocalStorage) {
-        localStorage.removeItem(SETTINGS_KEY);
+      if (hasStorage) {
+        util.removeFromStorage(SETTINGS_KEY);
       }
     };
 
@@ -543,8 +543,8 @@ Dropbox.prototype = {
     }).then((link) => {
       this._itemRefs[path] = link;
 
-      if (hasLocalStorage) {
-        localStorage.setItem(SETTINGS_KEY+':shares', JSON.stringify(this._itemRefs));
+      if (hasStorage) {
+        util.setInStorage(SETTINGS_KEY+':shares', JSON.stringify(this._itemRefs), this.rs.getPersistState());
       }
 
       return Promise.resolve(link);
@@ -1096,7 +1096,7 @@ function unHookIt(rs){
  * @protected
  */
 Dropbox._rs_init = function (rs) {
-  hasLocalStorage = util.localStorageAvailable();
+  hasStorage = util.storageAvailable();
   if ( rs.apiKeys.dropbox ) {
     rs.dropbox = new Dropbox(rs);
   }
@@ -1126,8 +1126,8 @@ Dropbox._rs_supported = function () {
  */
 Dropbox._rs_cleanup = function (rs) {
   unHookIt(rs);
-  if (hasLocalStorage){
-    localStorage.removeItem(SETTINGS_KEY);
+  if (hasStorage){
+    util.removeFromStorage(SETTINGS_KEY);
   }
   rs.setBackend(undefined);
 };

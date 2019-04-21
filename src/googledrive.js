@@ -31,10 +31,10 @@ const RS_DIR_MIME_TYPE = 'application/json; charset=UTF-8';
 const isFolder = util.isFolder;
 const cleanPath = util.cleanPath;
 const shouldBeTreatedAsBinary = util.shouldBeTreatedAsBinary;
-const getJSONFromLocalStorage = util.getJSONFromLocalStorage;
+const getJSONFromStorage = util.getJSONFromStorage;
 const getTextFromArrayBuffer = util.getTextFromArrayBuffer;
 
-let hasLocalStorage;
+let hasStorage;
 
 /**
  * Produce a title from a filename for metadata.
@@ -139,10 +139,10 @@ const GoogleDrive = function (remoteStorage, clientId) {
 
   this._fileIdCache = new Cache(60 * 5); // IDs expire after 5 minutes (is this a good idea?)
 
-  hasLocalStorage = util.localStorageAvailable();
+  hasStorage = util.storageAvailable();
 
-  if (hasLocalStorage){
-    const settings = getJSONFromLocalStorage(SETTINGS_KEY);
+  if (hasStorage){
+    const settings = getJSONFromStorage(SETTINGS_KEY);
     if (settings) {
       this.configure(settings);
     }
@@ -172,19 +172,19 @@ GoogleDrive.prototype = {
     if (typeof settings.token !== 'undefined') { this.token = settings.token; }
 
     const writeSettingsToCache = function() {
-      if (hasLocalStorage) {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+      if (hasStorage) {
+        util.setInStorage(SETTINGS_KEY, JSON.stringify({
           userAddress: this.userAddress,
           token: this.token
-        }));
+        }), this.rs.getPersistState());
       }
     };
 
     const handleError = function() {
       this.connected = false;
       delete this.token;
-      if (hasLocalStorage) {
-        localStorage.removeItem(SETTINGS_KEY);
+      if (hasStorage) {
+        util.removeFromStorage(SETTINGS_KEY);
       }
     };
 

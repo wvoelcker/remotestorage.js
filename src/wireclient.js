@@ -41,7 +41,7 @@ const config = require('./config');
  * @interface
  */
 
-var hasLocalStorage;
+var hasStorage;
 var SETTINGS_KEY = 'remotestorage:wireclient';
 
 var API_2012 = 1, API_00 = 2, API_01 = 3, API_02 = 4, API_HEAD = 5;
@@ -137,7 +137,7 @@ var WireClient = function WireClient(rs) {
    **/
   eventHandling(this, 'connected', 'not-connected');
 
-  if (hasLocalStorage) {
+  if (hasStorage) {
     const settings = getJSONFromLocalStorage(SETTINGS_KEY);
     if (settings) {
       setTimeout(function () {
@@ -338,14 +338,14 @@ WireClient.prototype = {
     } else {
       this.connected = false;
     }
-    if (hasLocalStorage) {
-      localStorage[SETTINGS_KEY] = JSON.stringify({
+    if (hasStorage) {
+      util.setInStorage(SETTINGS_KEY, JSON.stringify({
         userAddress: this.userAddress,
         href: this.href,
         storageApi: this.storageApi,
         token: this.token,
         properties: this.properties
-      });
+      }), this.rs.getPersistState());
     }
   },
 
@@ -592,7 +592,7 @@ Object.defineProperty(WireClient.prototype, 'storageType', {
 
 
 WireClient._rs_init = function (remoteStorage) {
-  hasLocalStorage = util.localStorageAvailable();
+  hasStorage = util.storageAvailable();
   remoteStorage.remote = new WireClient(remoteStorage);
   this.online = true;
 };
@@ -602,8 +602,8 @@ WireClient._rs_supported = function () {
 };
 
 WireClient._rs_cleanup = function () {
-  if (hasLocalStorage){
-    delete localStorage[SETTINGS_KEY];
+  if (hasStorage){
+    util.removeFromStorage(SETTINGS_KEY);
   }
 };
 
