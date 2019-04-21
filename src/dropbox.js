@@ -46,7 +46,7 @@ const PATH_PREFIX = '/remotestorage';
 const isFolder = util.isFolder;
 const cleanPath = util.cleanPath;
 const shouldBeTreatedAsBinary = util.shouldBeTreatedAsBinary;
-const getJSONFromLocalStorage = util.getJSONFromLocalStorage;
+const getJSONFromStorage = util.getJSONFromStorage;
 const getTextFromArrayBuffer = util.getTextFromArrayBuffer;
 
 /**
@@ -90,11 +90,11 @@ var Dropbox = function (rs) {
   hasStorage = util.storageAvailable();
 
   if (hasStorage){
-    const settings = getJSONFromLocalStorage(SETTINGS_KEY);
+    const settings = getJSONFromStorage(SETTINGS_KEY);
     if (settings) {
       this.configure(settings);
     }
-    this._itemRefs = getJSONFromLocalStorage(`${SETTINGS_KEY}:shares`) || {};
+    this._itemRefs = getJSONFromStorage(`${SETTINGS_KEY}:shares`) || {};
   }
   if (this.connected) {
     setTimeout(this._emit.bind(this), 0, 'connected');

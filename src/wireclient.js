@@ -75,7 +75,7 @@ if (typeof(ArrayBufferView) === 'function') {
 const isFolder = util.isFolder;
 const cleanPath = util.cleanPath;
 const shouldBeTreatedAsBinary = util.shouldBeTreatedAsBinary;
-const getJSONFromLocalStorage = util.getJSONFromLocalStorage;
+const getJSONFromStorage = util.getJSONFromStorage;
 const getTextFromArrayBuffer = util.getTextFromArrayBuffer;
 
 function addQuotes(str) {
@@ -138,7 +138,7 @@ var WireClient = function WireClient(rs) {
   eventHandling(this, 'connected', 'not-connected');
 
   if (hasStorage) {
-    const settings = getJSONFromLocalStorage(SETTINGS_KEY);
+    const settings = getJSONFromStorage(SETTINGS_KEY);
     if (settings) {
       setTimeout(function () {
         this.configure(settings);
