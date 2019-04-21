@@ -91,9 +91,11 @@ var RemoteStorage = function (cfg) {
   this.apiKeys = {};
 
   /**
-   *  'True' if the next user to log in should be remembered after their session ends
+   *  'True' if the next user to log in should be remembered after their session ends.
+   * 
+   *  Allow setting defalt value via config.  If not set via config, default to 'true'
    */
-   this.rememberme = true;
+   this.rememberme = config.rememberme !== false;
 
   hasStorage = util.storageAvailable();
 
