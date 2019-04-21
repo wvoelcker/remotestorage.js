@@ -164,7 +164,14 @@ RemoteStorage.SyncError = Sync.SyncError;
 RemoteStorage.Unauthorized = Authorize.Unauthorized;
 RemoteStorage.DiscoveryError = Discover.DiscoveryError;
 
-const isRelevantKey = function isRelevantKey(key) { return (key.indexOf("remotestorage:") === 0); }
+const isRelevantKey = function isRelevantKey(key) {
+  console.log("Checking key for relevance", key);
+  const index = key.indexOf("remotestorage:");
+  console.log("index", index);
+  const relevant = (index === 0);
+  console.log("relvant", relvant);
+  return relevant;
+}
 
 const setStorageValues = function setStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey);
