@@ -1,7 +1,7 @@
 if (typeof define !== 'function') {
   var define = require('amdefine')(module);
 }
-define(['util', 'require', './src/eventhandling', './src/googledrive', './src/config', 'test/behavior/backend', 'test/helpers/mocks'],
+define(['./src/util', 'require', './src/eventhandling', './src/googledrive', './src/config', 'test/behavior/backend', 'test/helpers/mocks'],
        function (util, require, eventHandling, GoogleDrive, config, backend, mocks) {
 
   var suites = [];
@@ -40,11 +40,11 @@ define(['util', 'require', './src/eventhandling', './src/googledrive', './src/co
     env.rs = new RemoteStorage();
 
     env.rs.apiKeys= { googledrive: {clientId: 'testkey'} };
-    var oldLocalStorageAvailable = util.localStorageAvailable;
-    util.localStorageAvailable = function() { return true; };
+    var oldStorageAvailable = util.storageAvailable;
+    util.storageAvailable = function() { return true; };
     env.client = new GoogleDrive(env.rs);
     env.connectedClient = new GoogleDrive(env.rs);
-    util.localStorageAvailable = oldLocalStorageAvailable;
+    util.storageAvailable = oldStorageAvailable;
     env.baseURI = 'https://example.com/storage/test';
     env.token = 'foobarbaz';
     env.connectedClient.configure({
@@ -149,10 +149,10 @@ define(['util', 'require', './src/eventhandling', './src/googledrive', './src/co
       {
         desc: "#configure emits error when the user info can't be fetched",
         run: function (env, test) {
-          var oldRemoveItem = global.localStorage.removeItem;
-          global.localStorage.removeItem = function(key) {
+          var oldRemoveItem =  util.removeFromStorage;
+          util.removeFromStorage = function(key) {
             test.assertAnd(key, 'remotestorage:googledrive');
-            global.localStorage.removeItem = oldRemoveItem;
+            util.removeFromStorage = oldRemoveItem;
           };
 
           env.rs.on('error', function(error) {
@@ -174,16 +174,16 @@ define(['util', 'require', './src/eventhandling', './src/googledrive', './src/co
       },
 
       {
-        desc: "#configure caches token and userAddress in localStorage",
+        desc: "#configure caches token and userAddress in storage",
         run: function (env, test) {
-          var oldSetItem = global.localStorage.setItem;
-          global.localStorage.setItem = function(key, value) {
+          var oldSetItem = util.setInStorage;
+          util.setInStorage = function(key, value) {
             test.assertAnd(key, 'remotestorage:googledrive');
             test.assert(value, JSON.stringify({
               userAddress: 'john.doe@gmail.com',
               token: 'thetoken'
             }));
-            global.localStorage.setItem = oldSetItem;
+            util.setInStorage = oldSetItem;
           };
 
           env.client.configure({

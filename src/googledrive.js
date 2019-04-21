@@ -660,6 +660,7 @@ GoogleDrive.prototype = {
    * @private
    */
   _request: function (method, url, options) {
+
     if (! options.headers) { options.headers = {}; }
     options.headers['Authorization'] = 'Bearer ' + this.token;
 
