@@ -169,7 +169,7 @@ const isRelevantKey = function isRelevantKey(key) { return (key.indexOf("remotes
 const setStorageValues = function setStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey);
   for (const fromKey of fromKeys) {
-    toStorage.setItem(fromStorage.getItem(fromKey));
+    toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
     fromStorage.removeItem(fromKey);
   }
   const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
