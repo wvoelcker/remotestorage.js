@@ -175,7 +175,9 @@ const isRelevantKey = function isRelevantKey(key) {
 
 const setStorageValues = function setStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey);
+  console.log("fromKeys", fromKeys);
   for (const fromKey of fromKeys) {
+    console.log("setting", fromKey);
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
     fromStorage.removeItem(fromKey);
   }
