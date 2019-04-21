@@ -173,14 +173,14 @@ const isRelevantKey = function isRelevantKey(key) {
 const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey(key));
   for (const fromKey of fromKeys) {
-    console.log("Setting", toStorage, fromKey, fromStorage.getItem(fromKey));
+    console.log("Setting", fromKey);
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
-    console.log("Removing 1", fromStorage);
+    console.log("Removing 1", fromKey);
     fromStorage.removeItem(fromKey);
   }
   const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
   for (const strayKey of strayKeys) {
-    console.log("Removing 2", toStorage, strayKey);
+    console.log("Removing 2", strayKey);
     toStorage.removeItem(strayKey);
   }
 
@@ -194,6 +194,7 @@ RemoteStorage.prototype = {
    * @param {boolean} newvalue the new value of the 'rememberme' flag
    */
   setRememberMe: function setRememberMe(newvalue) {
+    console.log("Setting rememberme", newvalue);
     if (this.remote) {
       if (this.remote.connected) {
         throw new Error("Cannot set 'remember me' when connected");  
@@ -208,8 +209,10 @@ RemoteStorage.prototype = {
     this.rememberme = newvalue;
 
     if (newvalue === true) {
+      console.log("Moving storage from session to local");
       moveStorageValues(sessionStorage, localStorage);
     } else {
+      console.log("Moving storage from local to session");
       moveStorageValues(localStorage, sessionStorage);
     }
   },
