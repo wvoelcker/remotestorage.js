@@ -320,12 +320,12 @@ var util = {
    * @returns {string} string from storage or undefined
    */
   setInStorage: function(key, value, isPersistent) {
-    console.log("Setting in storage", key, value, isPersistent);
     if (isPersistent) {
       localStorage.setItem(key, value);
     } else {
       sessionStorage.setItem(key, value);
     }
+    throw new Error("FISH");
   },
 
   /**
