@@ -195,15 +195,6 @@ RemoteStorage.prototype = {
    */
   setRememberMe: function setRememberMe(newvalue) {
     const oldvalue = this.rememberme?true:false;
-    console.log("Setting rememberme", oldvalue, newvalue);
-    if (this.remote) {
-      if (this.remote.connected) {
-        throw new Error("Cannot set 'remember me' when connected");  
-      }
-      if (this.remote.connecting) {
-        throw new Error("Cannot set 'remember me' when connecting");  
-      }
-    }
     if (config.cache) {
      throw new Error("Cannot set 'remember me' when caching is enabled (must be 'true' in this case)"); 
     }
