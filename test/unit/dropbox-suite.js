@@ -16,8 +16,19 @@ define(['require', './src/util', './src/dropbox', './src/wireclient',
       global.RemoteStorage.prototype.setBackend = function (b) {
         this.backend = b;
       };
+      global.RemoteStorage.prototype.setRememberMe = function(newvalue) {
+        this.rememberme = newvalue;
+      }
+      global.RemoteStorage.prototype.getPersistState = function() {
+        return this.rememberme;
+      }
 
       global.localStorage = {
+        setItem: function() {},
+        removeItem: function() {}
+      };
+
+      global.sessionStorage = {
         setItem: function() {},
         removeItem: function() {}
       };
@@ -38,12 +49,12 @@ define(['require', './src/util', './src/dropbox', './src/wireclient',
       env.rs = new RemoteStorage();
       env.rs.apiKeys = { dropbox: {appKey: 'testkey'} };
 
-      var oldLocalStorageAvailable = util.localStorageAvailable;
-      util.localStorageAvailable = function() { return true; };
+      var oldStorageAvailable = util.storageAvailable;
+      util.storageAvailable = function() { return true; };
       env.client = new Dropbox(env.rs);
       env.connectedClient = new Dropbox(env.rs);
       env.connectedClient._initialFetchDone = true;
-      util.localStorageAvailable = oldLocalStorageAvailable;
+      util.storageAvailable = oldStorageAvailable;
       env.baseURI = 'https://example.com/storage/test';
       env.token = 'foobarbaz';
       env.connectedClient.configure({
@@ -267,10 +278,10 @@ define(['require', './src/util', './src/dropbox', './src/wireclient',
         {
           desc: "#configure emits error when the user info can't be fetched",
           run: function (env, test) {
-            var oldRemoveItem = global.localStorage.removeItem;
-            global.localStorage.removeItem = function(key) {
+            var oldRemoveItem = util.removeFromStorage;
+            util.removeFromStorage =  function(key) {
               test.assertAnd(key, 'remotestorage:dropbox');
-              global.localStorage.removeItem = oldRemoveItem;
+              util.removeFromStorage = oldRemoveItem;
             };
 
             env.rs.on('error', function(error) {
@@ -318,16 +329,16 @@ define(['require', './src/util', './src/dropbox', './src/wireclient',
         },
 
         {
-          desc: "#configure caches token and userAddress in localStorage",
+          desc: "#configure caches token and userAddress in storage",
           run: function (env, test) {
-            var oldSetItem = global.localStorage.setItem;
-            global.localStorage.setItem = function(key, value) {
+            var oldSetItem = util.setInStorage;
+            util.setInStorage = function(key, value, isPersistent) {
               test.assertAnd(key, 'remotestorage:dropbox');
               test.assert(value, JSON.stringify({
                 userAddress: 'john.doe@example.com',
                 token: 'thetoken'
               }));
-              global.localStorage.setItem = oldSetItem;
+              util.setInStorage = oldSetItem;
             };
 
             env.client.configure({
