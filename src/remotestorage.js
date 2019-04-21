@@ -164,6 +164,21 @@ RemoteStorage.SyncError = Sync.SyncError;
 RemoteStorage.Unauthorized = Authorize.Unauthorized;
 RemoteStorage.DiscoveryError = Discover.DiscoveryError;
 
+const isRelevantKey = function isRelevantKey(key) { return (key.indexOf("remotestorage:") === 0); }
+
+const setStorageValues = function setStorageValues(fromStorage, toStorage) {
+  const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey);
+  for (const fromKey of fromKeys) {
+    toStorage.setItem(fromStorage.getItem(fromKey));
+    fromStorage.removeItem(fromKey);
+  }
+  const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
+  for (const strayKey of strayKeys) {
+    toStorage.removeItem(strayKey);
+  }
+
+}
+
 RemoteStorage.prototype = {
 
   /**
@@ -172,13 +187,24 @@ RemoteStorage.prototype = {
    * @param {boolean} newvalue the new value of the 'rememberme' flag
    */
   setRememberMe: function setRememberMe(newvalue) {
-    if (this.remote && this.remote.connected) {
-      throw new Error("Cannot set 'remember me' when connected");
+    if (this.remote) {
+      if (this.remote.connected) {
+        throw new Error("Cannot set 'remember me' when connected");  
+      }
+      if (this.remote.connecting) {
+        throw new Error("Cannot set 'remember me' when connecting");  
+      }
     }
     if (config.cache) {
      throw new Error("Cannot set 'remember me' when caching is enabled (must be 'true' in this case)"); 
     }
     this.rememberme = newvalue;
+
+    if (newvalue === true) {
+      setStorageValues(sessionStorage, localStorage);
+    } else {
+      setStorageValues(localStorage, sessionStorage);
+    }
   },
 
   /**
