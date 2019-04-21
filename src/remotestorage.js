@@ -12,9 +12,11 @@ const log = require('./log');
 const Features = require('./features');
 const globalContext = util.getGlobalContext();
 const eventHandling = require('./eventhandling');
-const getJSONFromLocalStorage = util.getJSONFromLocalStorage;
+const getJSONFromStorage = util.getJSONFromStorage;
+const getStringFromStorage = util.getStringFromStorage;
 
-var hasLocalStorage;
+
+var hasStorage;
 
 // TODO document and/or refactor (seems weird)
 function emitUnauthorized(r) {
@@ -88,11 +90,16 @@ var RemoteStorage = function (cfg) {
    */
   this.apiKeys = {};
 
-  hasLocalStorage = util.localStorageAvailable();
+  /**
+   *  'True' if the next user to log in should be remembered after their session ends
+   */
+   this.rememberme = true;
 
-  if (hasLocalStorage) {
-    this.apiKeys = getJSONFromLocalStorage('remotestorage:api-keys') || {};
-    this.setBackend(localStorage.getItem('remotestorage:backend') || 'remotestorage');
+  hasStorage = util.storageAvailable();
+
+  if (hasStorage) {
+    this.apiKeys = getJSONFromStorage('remotestorage:api-keys') || {};
+    this.setBackend(getStringFromStorage('remotestorage:backend') || 'remotestorage');
   }
 
   // Keep a reference to the orginal `on` function
@@ -158,6 +165,13 @@ RemoteStorage.Unauthorized = Authorize.Unauthorized;
 RemoteStorage.DiscoveryError = Discover.DiscoveryError;
 
 RemoteStorage.prototype = {
+
+  /**
+   * Allows changing whether the next user should be remembered after their session ends
+   */
+  setRememberMe: function setRememberMe(newvalue) {
+    this.rememberme = newvalue;
+  },
 
   /**
    * Load all modules passed as arguments
@@ -371,6 +385,19 @@ RemoteStorage.prototype = {
     }
   },
 
+  setInStorage: function(key, value) {
+    if (this.rememberme) {
+      localStorage.setItem(key, value);
+    } else {
+      sessionStorage.setItem(key, value);
+    }
+  },
+
+  removeFromStorage: function(key) {
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+  },
+
   /**
    * TODO: document
    *
@@ -378,11 +405,11 @@ RemoteStorage.prototype = {
    */
   setBackend: function (what) {
     this.backend = what;
-    if (hasLocalStorage) {
+    if (hasStorage) {
       if (what) {
-        localStorage.setItem('remotestorage:backend', what);
+        this.setInStorage('remotestorage:backend', what);
       } else {
-        localStorage.removeItem('remotestorage:backend');
+        this.removeFromStorage('remotestorage:backend');
       }
     }
   },
@@ -470,8 +497,8 @@ RemoteStorage.prototype = {
       return true;
     });
 
-    if (hasLocalStorage) {
-      localStorage.setItem('remotestorage:api-keys', JSON.stringify(this.apiKeys));
+    if (hasStorage) {
+      this.setInStorage('remotestorage:api-keys', JSON.stringify(this.apiKeys));
     }
   },
 

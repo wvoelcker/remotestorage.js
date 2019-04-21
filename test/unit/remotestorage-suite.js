@@ -262,6 +262,18 @@ define(['require', 'tv4', './src/eventhandling'], function (require, tv4, eventH
       {
         desc: "#connect sets the backend to remotestorage",
         run: function(env, test) {
+          global.sessionStorage = {
+            storage: {},
+            setItem: function(key, value) {
+              this.storage[key] = value;
+            },
+            getItem: function(key) {
+              return this.storage[key];
+            },
+            removeItem: function(key) {
+              delete this.storage[key];
+            }           
+          }
           global.localStorage = {
             storage: {},
             setItem: function(key, value) {

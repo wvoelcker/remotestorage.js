@@ -191,17 +191,50 @@ var util = {
     return paths;
   },
 
-  localStorageAvailable () {
+  storageTypeAvailable(storageName) {
     const context = util.getGlobalContext();
 
-    if (!('localStorage' in context)) { return false; }
+    if (!(storageName in context)) {
+      return false;
+    }
 
     try {
-      context.localStorage.setItem('rs-check', 1);
-      context.localStorage.removeItem('rs-check');
+      context[storageName].setItem('rs-check', 1);
+      context[storageName].removeItem('rs-check');
       return true;
     } catch(error) {
       return false;
+    }
+  },
+
+  localStorageAvailable () {
+    return util.storageTypeAvailable('localStorage');
+  },
+
+  sessionStorageAvailable () {
+    return util.storageTypeAvailable('sessionStorage');
+  },
+
+  storageAvailable() {
+    return util.localStorageAvailable() && util.sessionStorageAvailable();
+  },
+
+
+  /**
+   * Extract and parse JSON data from storage (local or session)
+   *
+   * @param {string} key - storage key
+   * @param {string} storageName - 'localStorage' or 'sessionStorage'
+   *
+   * @returns {object} parsed object or undefined
+   */
+  getJSONFromStorageType (key, storageName) {
+    const context = util.getGlobalContext();
+
+    try {
+      return JSON.parse(context[storageName].getItem(key));
+    } catch(e) {
+      // no JSON stored
     }
   },
 
@@ -213,12 +246,53 @@ var util = {
    * @returns {object} parsed object or undefined
    */
   getJSONFromLocalStorage (key) {
-    const context = util.getGlobalContext();
+    return util.getJSONFromStorageType(key, 'localStorage');
+  },
 
-    try {
-      return JSON.parse(context.localStorage.getItem(key));
-    } catch(e) {
-      // no JSON stored
+  /**
+   * Extract and parse JSON data from sessionStorage.
+   *
+   * @param {string} key - sessionStorage key
+   *
+   * @returns {object} parsed object or undefined
+   */
+  getJSONFromSessionStorage (key) {
+    return util.getJSONFromStorageType(key, 'sessionStorage');
+  },
+
+  /**
+   * Extract and parse JSON data from storage (prefer session, fall back to local).
+   *
+   * @param {string} key - storage key
+   *
+   * @returns {object} parsed object or undefined
+   */
+  getJSONFromStorage (key) {
+    const valueFromSessionStorage = util.getJSONFromSessionStorage(key);
+    if (valueFromSessionStorage) {
+      return valueFromSessionStorage;
+    }
+    const valueFromLocalStorage = util.getJSONFromLocalStorage(key);
+    if (valueFromLocalStorage) {
+      return valueFromLocalStorage;
+    }
+  },
+
+  /**
+   * Extract string data from storage (prefer session, fall back to local).
+   *
+   * @param {string} key - storage key
+   *
+   * @returns {string} string from storage or undefined
+   */
+  getStringFromStorage (key) {
+    const valueFromLocalStorage = localStorage.getItem(key);
+    if (valueFromLocalStorage) {
+      return valueFromLocalStorage;
+    }
+    const valueFromSessionStorage = sessionStorage.getItem(key);
+    if (valueFromSessionStorage) {
+      return valueFromSessionStorage;
     }
   },
 
