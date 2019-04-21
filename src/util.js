@@ -325,7 +325,6 @@ var util = {
     } else {
       sessionStorage.setItem(key, value);
     }
-    throw new Error("FISH");
   },
 
   /**

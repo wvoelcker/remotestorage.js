@@ -173,11 +173,14 @@ const isRelevantKey = function isRelevantKey(key) {
 const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey(key));
   for (const fromKey of fromKeys) {
+    console.log("Setting", toStorage, fromKey, fromStorage.getItem(fromKey));
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
+    console.log("Removing 1", fromStorage);
     fromStorage.removeItem(fromKey);
   }
   const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
   for (const strayKey of strayKeys) {
+    console.log("Removing 2", toStorage, strayKey);
     toStorage.removeItem(strayKey);
   }
 
