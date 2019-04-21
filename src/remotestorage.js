@@ -194,7 +194,7 @@ RemoteStorage.prototype = {
    * @param {boolean} newvalue the new value of the 'rememberme' flag
    */
   setRememberMe: function setRememberMe(newvalue) {
-    const oldvalue = this.rememberme+"";
+    const oldvalue = this.rememberme?true:false;
     console.log("Setting rememberme", oldvalue, newvalue);
     if (this.remote) {
       if (this.remote.connected) {
