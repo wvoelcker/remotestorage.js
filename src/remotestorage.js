@@ -168,7 +168,7 @@ const isRelevantKey = function isRelevantKey(key) {
   return (key.indexOf("remotestorage:") === 0);
 }
 
-const setStorageValues = function setStorageValues(fromStorage, toStorage) {
+const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey(key));
   for (const fromKey of fromKeys) {
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
@@ -203,9 +203,9 @@ RemoteStorage.prototype = {
     this.rememberme = newvalue;
 
     if (newvalue === true) {
-      setStorageValues(sessionStorage, localStorage);
+      moveStorageValues(sessionStorage, localStorage);
     } else {
-      setStorageValues(localStorage, sessionStorage);
+      moveStorageValues(localStorage, sessionStorage);
     }
   },
 
