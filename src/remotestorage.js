@@ -194,7 +194,8 @@ RemoteStorage.prototype = {
    * @param {boolean} newvalue the new value of the 'rememberme' flag
    */
   setRememberMe: function setRememberMe(newvalue) {
-    console.log("Setting rememberme", newvalue);
+    const oldvalue = this.rememberme+"";
+    console.log("Setting rememberme", oldvalue, newvalue);
     if (this.remote) {
       if (this.remote.connected) {
         throw new Error("Cannot set 'remember me' when connected");  
@@ -208,13 +209,16 @@ RemoteStorage.prototype = {
     }
     this.rememberme = newvalue;
 
-    if (newvalue === true) {
-      console.log("Moving storage from session to local");
-      moveStorageValues(sessionStorage, localStorage);
-    } else {
-      console.log("Moving storage from local to session");
-      moveStorageValues(localStorage, sessionStorage);
+    if (oldvalue !== newvalue) {
+      if (newvalue === true) {
+        console.log("Moving storage from session to local");
+        moveStorageValues(sessionStorage, localStorage);
+      } else {
+        console.log("Moving storage from local to session");
+        moveStorageValues(localStorage, sessionStorage);
+      }      
     }
+
   },
 
   /**
