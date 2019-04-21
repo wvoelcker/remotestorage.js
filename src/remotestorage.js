@@ -173,14 +173,11 @@ const isRelevantKey = function isRelevantKey(key) {
 const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey(key));
   for (const fromKey of fromKeys) {
-    console.log("Setting", fromKey);
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
-    console.log("Removing 1", fromKey);
     fromStorage.removeItem(fromKey);
   }
   const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
   for (const strayKey of strayKeys) {
-    console.log("Removing 2", strayKey);
     toStorage.removeItem(strayKey);
   }
 
@@ -202,10 +199,8 @@ RemoteStorage.prototype = {
 
     if (oldvalue !== newvalue) {
       if (newvalue === true) {
-        console.log("Moving storage from session to local");
         moveStorageValues(sessionStorage, localStorage);
       } else {
-        console.log("Moving storage from local to session");
         moveStorageValues(localStorage, sessionStorage);
       }      
     }
