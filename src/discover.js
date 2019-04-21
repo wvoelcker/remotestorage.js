@@ -26,7 +26,7 @@ var cachedInfo = {};
  *          properties - Webfinger link properties
  **/
 
-const Discover = function Discover(userAddress) {
+const Discover = function Discover(userAddress, isPersistent) {
   return new Promise((resolve, reject) => {
 
     if (userAddress in cachedInfo) {
@@ -64,7 +64,7 @@ const Discover = function Discover(userAddress) {
       };
 
       if (hasStorage) {
-        util.setInStorage(SETTINGS_KEY, JSON.stringify({ cache: cachedInfo }), rs.getPersistState());
+        util.setInStorage(SETTINGS_KEY, JSON.stringify({ cache: cachedInfo }), isPersistent);
       }
 
       return resolve(cachedInfo[userAddress]);

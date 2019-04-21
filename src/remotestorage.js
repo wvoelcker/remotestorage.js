@@ -312,7 +312,7 @@ RemoteStorage.prototype = {
       this._emit('error', new RemoteStorage.DiscoveryError("No storage information found for this user address."));
     }.bind(this), config.discoveryTimeout);
 
-    Discover(userAddress).then(info => {
+    Discover(userAddress, this.getPersistState()).then(info => {
       // Info contains fields: href, storageApi, authURL (optional), properties
 
       clearTimeout(discoveryTimeout);
