@@ -169,7 +169,7 @@ const isRelevantKey = function isRelevantKey(key) {
   const index = key.indexOf("remotestorage:");
   console.log("index", index);
   const relevant = (index === 0);
-  console.log("relvant", relvant);
+  console.log("relevant", relevant);
   return relevant;
 }
 
