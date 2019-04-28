@@ -195,7 +195,7 @@ RemoteStorage.prototype = {
     if (!(newvalue === false || newvalue === true)) {
      throw new Error("New value for 'remember me' should be a boolean");  
     }
-    if (config.cache && newvalue == false) {
+    if (config.cache && !newvalue) {
      throw new Error("Cannot set 'remember me' to false when caching is enabled (if caching enabled, user is always remembered)"); 
     }
     this.rememberme = newvalue;
