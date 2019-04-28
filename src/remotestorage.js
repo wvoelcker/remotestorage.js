@@ -192,8 +192,11 @@ RemoteStorage.prototype = {
    */
   setRememberMe: function setRememberMe(newvalue) {
     const oldvalue = this.rememberme?true:false;
-    if (config.cache) {
-     throw new Error("Cannot set 'remember me' when caching is enabled (if caching enabled, user is always remembered)"); 
+    if (!(newvalue === false || newvalue === true)) {
+     throw new Error("New value for 'remember me' should be a boolean");  
+    }
+    if (config.cache && newvalue == false) {
+     throw new Error("Cannot set 'remember me' to false when caching is enabled (if caching enabled, user is always remembered)"); 
     }
     this.rememberme = newvalue;
 
