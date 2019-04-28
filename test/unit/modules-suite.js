@@ -10,6 +10,17 @@ define(['./src/remotestorage', './src/modules'], function(RemoteStorage, modules
     setup: function(env, test) {
       global.XMLHttpRequest = require('xhr2');
 
+      global.localStorage = {
+        getItem: function() {},
+        setItem: function() {},
+        removeItem: function() {}
+      };
+      global.sessionStorage = {
+        getItem: function() {},
+        setItem: function() {},
+        removeItem: function() {}
+      };
+
       RemoteStorage.prototype.remote = {
         connected: false
       };

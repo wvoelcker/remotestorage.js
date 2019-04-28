@@ -11,6 +11,7 @@ define(['./src/sync', './src/wireclient', './src/authorize', './src/eventhandlin
 
     global.RemoteStorage.log = function() {};
     global.RemoteStorage.prototype.localStorageAvailable = function() { return false; };
+    global.RemoteStorage.prototype.getPersistState = function() { return true; };
 
     test.done();
   }

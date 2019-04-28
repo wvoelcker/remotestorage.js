@@ -25,6 +25,13 @@ define(['./src/config', './src/eventhandling', './src/inmemorystorage', './src/s
         eventHandling(this, 'sync-req-done', 'sync-done', 'ready', 'error');
       };
       global.RemoteStorage.log = function() {};
+
+      global.localStorage = {
+        getItem: function() {},
+        setItem: function() {},
+        removeItem: function() {}
+      }
+
       config.changeEvents = { local: true, window: false, remote: true, conflict: true };
 
       env.responses1 = {
