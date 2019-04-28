@@ -88,18 +88,7 @@ define(['require', 'tv4', './src/eventhandling'], function (require, tv4, eventH
         return  pending.promise;
       };
 
-      global.localStorage = {
-        setItem: function() {},
-        getItem: function() {},
-        removeItem: function() {}
-      };
-
-      global.sessionStorage = {
-        setItem: function() {},
-        getItem: function() {},
-        removeItem: function() {}
-      };
-
+      global.localStorage = {};
       global.RemoteStorage.prototype.remote = new FakeRemote();
       test.done();
     },
