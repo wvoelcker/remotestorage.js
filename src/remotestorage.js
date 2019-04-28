@@ -195,12 +195,27 @@ RemoteStorage.prototype = {
     if (!(newvalue === false || newvalue === true)) {
      throw new Error("New value for 'remember me' should be a boolean");  
     }
-    if (config.cache && !newvalue) {
-     throw new Error("Cannot set 'remember me' to false when caching is enabled (if caching enabled, user is always remembered)"); 
+
+    if (!newvalue) {
+      if (config.cache) {
+        throw new Error("Cannot set 'remember me' to false when caching is enabled (if caching enabled, user is always remembered)"); 
+      }
+      if (typeof sessionStorage === "undefined") {
+       throw new Error("Cannot set 'remember me' to false if sessionStorage is not available");  
+      }
+      if (typeof localStorage === "undefined") {
+       throw new Error("Cannot set 'remember me' to false if localStorage is not available (in this situation, the user is always remembered)");  
+      }
     }
+
+    // Stop here if no 'localStorage' (do not error, as this will be run every time the class is instantiated, even if there is no localStorage)
+    if (typeof localStorage === "undefined") {
+      return;
+    }
+
     this.rememberme = newvalue;
 
-    if (oldvalue !== newvalue) {
+    if (typeof sessionStorage !== "undefined" && oldvalue !== newvalue) {
       if (newvalue === true) {
         moveStorageValues(sessionStorage, localStorage);
       } else {
