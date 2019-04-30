@@ -12,9 +12,13 @@ const log = require('./log');
 const Features = require('./features');
 const globalContext = util.getGlobalContext();
 const eventHandling = require('./eventhandling');
-const getJSONFromStorage = util.getJSONFromStorage;
-const getStringFromStorage = util.getStringFromStorage;
 
+const {
+  getJSONFromStorage,
+  getStringFromStorage,
+  setInStorage,
+  removeFromStorage
+} = util;
 
 var hasStorage;
 
@@ -95,7 +99,7 @@ var RemoteStorage = function (cfg) {
    * 
    *  Allow setting defalt value via config.  If not set via config, default to 'true'
    */
-  this.setRememberMe(config.rememberme !== false);
+  this.setRememberMe(getStringFromStorage("remotestorage:rememberme") || (config.rememberme !== false));
 
   hasStorage = util.storageAvailable();
 
@@ -215,6 +219,12 @@ RemoteStorage.prototype = {
     }
 
     this.rememberme = newvalue;
+
+    if (newvalue) {
+      setInStorage("remotestorage:rememberme", "1");  
+    } else {
+      removeFromStorage("remotestorage:rememberme");
+    }
 
     if (typeof sessionStorage !== "undefined" && oldvalue !== newvalue) {
       if (newvalue === true) {
