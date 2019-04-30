@@ -16,7 +16,6 @@ const eventHandling = require('./eventhandling');
 const {
   getJSONFromStorage,
   getStringFromStorage,
-  setInStorage,
   removeFromStorage
 } = util;
 
@@ -220,8 +219,9 @@ RemoteStorage.prototype = {
 
     this.rememberme = newvalue;
 
+    // NB Must do this AFTER setting this.rememberme, so that it ends up in the right type of storage
     if (newvalue) {
-      setInStorage("remotestorage:rememberme", "1");  
+      this.setInStorage("remotestorage:rememberme", "1");  
     } else {
       removeFromStorage("remotestorage:rememberme");
     }
