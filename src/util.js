@@ -268,12 +268,15 @@ var util = {
    * @returns {object} parsed object or undefined
    */
   getJSONFromStorage (key) {
+    console.log("getting JSON from storage", key);
     const valueFromLocalStorage = util.getJSONFromLocalStorage(key);
     if (valueFromLocalStorage) {
+      console.log("found in local", valueFromLocalStorage);
       return valueFromLocalStorage;
     }
     const valueFromSessionStorage = util.getJSONFromSessionStorage(key);
     if (valueFromSessionStorage) {
+      console.log("found in session", valueFromSessionStorage);
       return valueFromSessionStorage;
     }
   },
@@ -286,12 +289,15 @@ var util = {
    * @returns {string} string from storage or undefined
    */
   getStringFromStorage (key) {
+    console.log("getting string from storage", key);
     const valueFromLocalStorage = localStorage.getItem(key);
     if (valueFromLocalStorage) {
+      console.log("found in local", valueFromLocalStorage);
       return valueFromLocalStorage;
     }
     const valueFromSessionStorage = sessionStorage.getItem(key);
     if (valueFromSessionStorage) {
+      console.log("found in session", valueFromSessionStorage);
       return valueFromSessionStorage;
     }
   },
