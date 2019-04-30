@@ -101,6 +101,7 @@ var RemoteStorage = function (cfg) {
 
   if (hasStorage) {
     this.apiKeys = getJSONFromStorage('remotestorage:api-keys') || {};
+    console.log("Backend from storage", getStringFromStorage('remotestorage:backend'));
     this.setBackend(getStringFromStorage('remotestorage:backend') || 'remotestorage');
   }
 
