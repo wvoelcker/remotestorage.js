@@ -268,13 +268,13 @@ var util = {
    * @returns {object} parsed object or undefined
    */
   getJSONFromStorage (key) {
-    const valueFromSessionStorage = util.getJSONFromSessionStorage(key);
-    if (valueFromSessionStorage) {
-      return valueFromSessionStorage;
-    }
     const valueFromLocalStorage = util.getJSONFromLocalStorage(key);
     if (valueFromLocalStorage) {
       return valueFromLocalStorage;
+    }
+    const valueFromSessionStorage = util.getJSONFromSessionStorage(key);
+    if (valueFromSessionStorage) {
+      return valueFromSessionStorage;
     }
   },
 
