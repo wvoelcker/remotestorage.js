@@ -475,6 +475,7 @@ RemoteStorage.prototype = {
    * @private
    */
   setBackend: function (what) {
+    console.log("setBackend", what);
     this.backend = what;
     if (hasStorage) {
       if (what) {
