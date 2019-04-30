@@ -98,7 +98,7 @@ var RemoteStorage = function (cfg) {
    * 
    *  Allow setting defalt value via config.  If not set via config, default to 'true'
    */
-  this.setRememberMe(getStringFromStorage("remotestorage:rememberme") ? true : (config.rememberme !== false));
+  this.setRememberMe(config.rememberme !== false);
 
   hasStorage = util.storageAvailable();
 
@@ -181,12 +181,6 @@ const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
     console.log("Removing item from storage (1)", fromKey);
     fromStorage.removeItem(fromKey);
   }
-  const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
-  for (const strayKey of strayKeys) {
-    console.log("Removing item from storage (2)", strayKey);
-    toStorage.removeItem(strayKey);
-  }
-
 }
 
 RemoteStorage.prototype = {
@@ -220,13 +214,6 @@ RemoteStorage.prototype = {
     }
 
     this.rememberme = newvalue;
-
-    // NB Must do this AFTER setting this.rememberme, so that it ends up in the right type of storage
-    if (newvalue) {
-      this.setInStorage("remotestorage:rememberme", "1");  
-    } else {
-      removeFromStorage("remotestorage:rememberme");
-    }
 
     if (typeof sessionStorage !== "undefined" && oldvalue !== newvalue) {
       if (newvalue === true) {
