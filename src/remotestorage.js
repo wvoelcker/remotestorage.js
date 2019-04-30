@@ -98,7 +98,7 @@ var RemoteStorage = function (cfg) {
    * 
    *  Allow setting defalt value via config.  If not set via config, default to 'true'
    */
-  this.setRememberMe(getStringFromStorage("remotestorage:rememberme") || (config.rememberme !== false));
+  this.setRememberMe(getStringFromStorage("remotestorage:rememberme") ? true : (config.rememberme !== false));
 
   hasStorage = util.storageAvailable();
 
