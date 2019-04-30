@@ -288,12 +288,15 @@ var util = {
   getStringFromStorage (key) {
     const valueFromLocalStorage = localStorage.getItem(key);
     if (valueFromLocalStorage) {
+      console.log("Found in local storage", key, valueFromLocalStorage);
       return valueFromLocalStorage;
     }
     const valueFromSessionStorage = sessionStorage.getItem(key);
     if (valueFromSessionStorage) {
+      console.log("Found in session storage", key, valueFromLocalStorage);
       return valueFromSessionStorage;
     }
+    console.log("Not found :(", key);
   },
 
 
