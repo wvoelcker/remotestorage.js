@@ -308,6 +308,7 @@ var util = {
    * @returns undefined
    */
   removeFromStorage: function(key) {
+    console.log("Removing item from storage (3)", key);
     localStorage.removeItem(key);
     sessionStorage.removeItem(key);
   },

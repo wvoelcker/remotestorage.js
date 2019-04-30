@@ -178,10 +178,12 @@ const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey(key));
   for (const fromKey of fromKeys) {
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
+    console.log("Removing item from storage (1)", fromKey);
     fromStorage.removeItem(fromKey);
   }
   const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
   for (const strayKey of strayKeys) {
+    console.log("Removing item from storage (2)", fromKey);
     toStorage.removeItem(strayKey);
   }
 
