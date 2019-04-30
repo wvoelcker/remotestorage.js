@@ -266,7 +266,13 @@ RemoteStorage.prototype = {
       options.scope = this.access.scopeParameter;
     }
 
-    options.redirectUri = globalContext.cordova ? config.cordovaRedirectUri : String(Authorize.getLocation());
+    if (config.authRedirectUri) {
+      options.redirectUri = config.authRedirectUri;
+    } else if (globalContext.cordova) {
+      options.redirectUri = config.cordovaRedirectUri;
+    } else {
+      options.redirectUri = String(Authorize.getLocation());
+    }
 
     if (typeof options.clientId === 'undefined') {
       options.clientId = options.redirectUri.match(/^(https?:\/\/[^/]+)/)[0];
