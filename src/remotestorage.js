@@ -267,7 +267,17 @@ RemoteStorage.prototype = {
     }
 
     if (config.authRedirectUri) {
-      options.redirectUri = config.authRedirectUri;
+      switch (typeof config.authRedirectUri) {
+        case "string":
+          options.redirectUri = config.authRedirectUri;
+          break;
+        case "function":
+          options.redirectUri = config.authRedirectUri();
+          break;
+        default:
+          throw new Error("config.authRedirectUri was an unsupported type");
+      }
+      
     } else if (globalContext.cordova) {
       options.redirectUri = config.cordovaRedirectUri;
     } else {
