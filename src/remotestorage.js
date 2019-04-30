@@ -104,7 +104,6 @@ var RemoteStorage = function (cfg) {
 
   if (hasStorage) {
     this.apiKeys = getJSONFromStorage('remotestorage:api-keys') || {};
-    console.log("Backend from storage", getStringFromStorage('remotestorage:backend'));
     this.setBackend(getStringFromStorage('remotestorage:backend') || 'remotestorage');
   }
 
@@ -178,7 +177,6 @@ const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey(key));
   for (const fromKey of fromKeys) {
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
-    console.log("Removing item from storage (1)", fromKey);
     fromStorage.removeItem(fromKey);
   }
 }
@@ -475,7 +473,6 @@ RemoteStorage.prototype = {
    * @private
    */
   setBackend: function (what) {
-    console.log("setBackend", what);
     this.backend = what;
     if (hasStorage) {
       if (what) {

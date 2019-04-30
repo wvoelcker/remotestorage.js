@@ -288,15 +288,12 @@ var util = {
   getStringFromStorage (key) {
     const valueFromLocalStorage = localStorage.getItem(key);
     if (valueFromLocalStorage) {
-      console.log("Found in local storage", key, valueFromLocalStorage);
       return valueFromLocalStorage;
     }
     const valueFromSessionStorage = sessionStorage.getItem(key);
     if (valueFromSessionStorage) {
-      console.log("Found in session storage", key, valueFromLocalStorage);
       return valueFromSessionStorage;
     }
-    console.log("Not found :(", key);
   },
 
 
@@ -308,7 +305,6 @@ var util = {
    * @returns undefined
    */
   removeFromStorage: function(key) {
-    console.log("Removing item from storage (3)", key);
     localStorage.removeItem(key);
     sessionStorage.removeItem(key);
   },
@@ -324,7 +320,6 @@ var util = {
    * @returns {string} string from storage or undefined
    */
   setInStorage: function(key, value, isPersistent) {
-    console.log("setting in storage", key, value, isPersistent);
     if (isPersistent) {
       localStorage.setItem(key, value);
     } else {
