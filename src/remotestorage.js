@@ -241,7 +241,10 @@ RemoteStorage.prototype = {
       const isInit = typeof isInitialSetting !== "undefined" && isInitialSetting;
 
       if (isInit) {
-        if (newvalue === true && !allRelevantKeysPresent(Object.keys(sessionStorage), localStorage)) {
+        const keysToCheck = Object.keys(sessionStorage);
+        console.log("keysToCheck", keysToCheck);
+        console.log("Object.keys(localStorage)", Object.keys(localStorage));
+        if (newvalue === true && !allRelevantKeysPresent(keysToCheck, localStorage)) {
           moveStorageValues(sessionStorage, localStorage);
         }
 
