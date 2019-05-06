@@ -987,3 +987,4 @@ Object.defineProperty(RemoteStorage.prototype, 'caching', {
  */
 module.exports = RemoteStorage;
 require('./modules');
+
