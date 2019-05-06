@@ -236,7 +236,7 @@ RemoteStorage.prototype = {
     const oldvalue = this.rememberme?true:false;
     this.rememberme = newvalue;
    
-    if (typeof sessionStorage !== "undefined" && oldvalue !== newvalue) {
+    if (typeof sessionStorage !== "undefined") {
 
       const isInit = typeof isInitialSetting !== "undefined" && isInitialSetting;
 
@@ -256,7 +256,7 @@ RemoteStorage.prototype = {
         }
       }
 
-      if (!isInit) {
+      if (!isInit && oldvalue !== newvalue) {
         if (newvalue === true) {
           moveStorageValues(sessionStorage, localStorage);
         } else {
