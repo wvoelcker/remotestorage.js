@@ -98,7 +98,7 @@ var RemoteStorage = function (cfg) {
    * 
    *  Allow setting defalt value via config.  If not set via config, default to 'true'
    */
-  this.setRememberMe(config.rememberme !== false);
+  this.setRememberMe(config.rememberme !== false, true);
 
   hasStorage = util.storageAvailable();
 
@@ -174,10 +174,33 @@ const isRelevantKey = function isRelevantKey(key) {
 }
 
 const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
+
+  // Move all relevant items from 'fromStorage' to 'toStorage'
   const fromKeys = Object.keys(fromStorage).filter(key => isRelevantKey(key));
   for (const fromKey of fromKeys) {
     toStorage.setItem(fromKey, fromStorage.getItem(fromKey));
     fromStorage.removeItem(fromKey);
+  }
+
+  // Remove any relevant keys in 'toStorage' that are not in 'fromStorage'
+  // (i.e. ensure the data is not fragmented between the two storages;
+  //  the util module checks both when reading from storage, so fragmentation
+  //  could lead to errors)
+  const strayKeys = Object.keys(toStorage).filter(key => isRelevantKey(key) && fromKeys.indexOf(key) === -1);
+  for (const strayKey of strayKeys) {
+    toStorage.removeItem(strayKey);
+  }
+
+}
+
+const allRelevantKeysPresent = function allRelevantKeysPresent(keys, storage) {
+  return !keys.some(key => key => isRelevantKey(key) && storage.indexOf(key) === -1);
+}
+
+const removeAllRelevantKeys = function removeAllRelevantKeys(keys, storage) {
+  const relevantKeys = Object.keys(storage).filter(isRelevantKey);
+  for (const relevantKey of relevantKeys) {
+    storage.removeItem(relevantKey);
   }
 }
 
@@ -188,8 +211,7 @@ RemoteStorage.prototype = {
    *
    * @param {boolean} newvalue the new value of the 'rememberme' flag
    */
-  setRememberMe: function setRememberMe(newvalue) {
-    const oldvalue = this.rememberme?true:false;
+  setRememberMe: function setRememberMe(newvalue, isInitialSetting) {
     if (!(newvalue === false || newvalue === true)) {
      throw new Error("New value for 'remember me' should be a boolean");  
     }
@@ -211,14 +233,30 @@ RemoteStorage.prototype = {
       return;
     }
 
+    const oldvalue = this.rememberme?true:false;
     this.rememberme = newvalue;
-
+   
     if (typeof sessionStorage !== "undefined" && oldvalue !== newvalue) {
-      if (newvalue === true) {
-        moveStorageValues(sessionStorage, localStorage);
-      } else {
-        moveStorageValues(localStorage, sessionStorage);
-      }      
+
+      const isInit = typeof isInitialSetting !== "undefined" && isInitialSetting;
+
+      if (isInit) {
+        if (newvalue === true && !allRelevantKeysPresent(Object.keys(sessionStorage), localStorage)) {
+          moveStorageValues(sessionStorage, localStorage);
+        }
+
+        if (newvalue === false) {
+          removeAllRelevantKeys(localStorage)
+        }
+      }
+
+      if (!isInit) {
+        if (newvalue === true) {
+          moveStorageValues(sessionStorage, localStorage);
+        } else {
+          moveStorageValues(localStorage, sessionStorage);
+        }
+      }
     }
 
   },
