@@ -193,8 +193,8 @@ const moveStorageValues = function moveStorageValues(fromStorage, toStorage) {
 
 }
 
-const allRelevantKeysPresent = function allRelevantKeysPresent(keys, storage) {
-  return !keys.some(key => key => isRelevantKey(key) && storage.indexOf(key) === -1);
+const allKeysPresent = function allKeysPresent(keys, storage) {
+  return !keys.some(key => storage.getItem(key) === null);
 }
 
 const removeAllRelevantKeys = function removeAllRelevantKeys(keys, storage) {
@@ -242,9 +242,12 @@ RemoteStorage.prototype = {
 
       if (isInit) {
         const keysToCheck = Object.keys(sessionStorage);
-        console.log("keysToCheck", keysToCheck);
-        console.log("Object.keys(localStorage)", Object.keys(localStorage));
-        if (newvalue === true && !allRelevantKeysPresent(keysToCheck, localStorage)) {
+        if (newvalue === true && !allKeysPresent(["remotestorage:backend", "remotestorage:api-keys"], localStorage)) {
+
+          // NB I think there is probably nothing relevant in sessionStorage at this stage,
+          // but this will have the effect of clearing everything relevant from localStorage,
+          // which is still desirable.  Plus, if in a future version of the code, there will
+          // be something in sessionStorage at this point, we will want to move it across.
           moveStorageValues(sessionStorage, localStorage);
         }
 
