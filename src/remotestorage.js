@@ -197,7 +197,7 @@ const allKeysPresent = function allKeysPresent(keys, storage) {
   return !keys.some(key => storage.getItem(key) === null);
 }
 
-const removeAllRelevantKeys = function removeAllRelevantKeys(keys, storage) {
+const removeAllRelevantKeys = function removeAllRelevantKeys(storage) {
   const relevantKeys = Object.keys(storage).filter(isRelevantKey);
   for (const relevantKey of relevantKeys) {
     storage.removeItem(relevantKey);
@@ -241,7 +241,6 @@ RemoteStorage.prototype = {
       const isInit = typeof isInitialSetting !== "undefined" && isInitialSetting;
 
       if (isInit) {
-        const keysToCheck = Object.keys(sessionStorage);
         if (newvalue === true && !allKeysPresent(["remotestorage:backend", "remotestorage:api-keys"], localStorage)) {
 
           // NB I think there is probably nothing relevant in sessionStorage at this stage,
