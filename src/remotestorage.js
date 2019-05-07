@@ -240,14 +240,8 @@ RemoteStorage.prototype = {
 
       const isInit = typeof isInitialSetting !== "undefined" && isInitialSetting;
 
-      console.log("isInit", isInit);
-      console.log("Object.keys(localStorage)", Object.keys(localStorage));
-      console.log("localStorage.getItem(\"remotestorage:backend\")", localStorage.getItem("remotestorage:backend"));
-
       if (isInit) {
         if (newvalue === true && !allKeysPresent(["remotestorage:backend", "remotestorage:api-keys"], localStorage)) {
-
-          console.log("New value is true and not all keys are present");
 
           // NB I think there is probably nothing relevant in sessionStorage at this stage,
           // but this will have the effect of clearing everything relevant from localStorage,
@@ -257,7 +251,6 @@ RemoteStorage.prototype = {
         }
 
         if (newvalue === false) {
-          console.log("new value is false");
           removeAllRelevantKeys(localStorage)
         }
       }
