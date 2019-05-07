@@ -242,6 +242,7 @@ RemoteStorage.prototype = {
 
       console.log("isInit", isInit);
       console.log("Object.keys(localStorage)", Object.keys(localStorage));
+      console.log("localStorage.getItem(\"remotestorage:backend\")", localStorage.getItem("remotestorage:backend"));
 
       if (isInit) {
         if (newvalue === true && !allKeysPresent(["remotestorage:backend", "remotestorage:api-keys"], localStorage)) {
